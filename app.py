@@ -28,6 +28,15 @@ def home():
     )
     return html.format(format)
 
+# TO DO:  Log out the prediction value
+@app.route("/hello_world")
+def hello_world():
+    html = (
+        "<h3>Hello world</h3>"
+    )
+    return html.format(format)
+
+
 
 # TO DO:  Log out the prediction value
 @app.route("/predict", methods=["POST"])
