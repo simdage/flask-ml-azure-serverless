@@ -8,6 +8,6 @@ steps:
 # Deploy container image to Cloud Run
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
-  args: ['run', 'deploy', 'image', '--image', 'gcr.io/flask-ml-app-401111/image', '--region', 'us-central1']
+  args: ['run', 'deploy', 'image', '--image', 'gcr.io/flask-ml-app-401111/image', '--region', 'northamerica-northeast1']
 images:
 - gcr.io/flask-ml-app-401111/image
