@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, url_for, render_template
 from flask.logging import create_logger
 import logging
 import os
@@ -10,13 +10,17 @@ app = Flask(__name__)
 LOG = create_logger(app)
 LOG.setLevel(logging.INFO)
 
+# Replace these with your own username and password
+USERNAME = 'your_username'
+PASSWORD = 'your_password'
 
-@app.route("/")
-def home():
-    html = (
-        "<h3>Sklearn Prediction Home: From Azure Pipelines (Continuous Delivery)</h3>"
-    )
-    return html.format(format)
+
+@app.route('/')
+def index():
+    if 'logged_in' in request.cookies and request.cookies['logged_in'] == 'true':
+        return 'Welcome to your app!'
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route("/predict", methods=["POST"])
@@ -27,15 +31,35 @@ def predict():
 
     clf = joblib.load("iris_prediction.joblib")
     payload = request.json
-    #LOG.info("JSON payload: %s json_payload")
+    # LOG.info("JSON payload: %s json_payload")
     print(payload)
     prediction = list(clf.predict(payload))
     prediction = [float(i) for i in prediction]
     print(prediction)
     pred = jsonify({"prediction": prediction})
     print(pred)
-    #LOG.info("Prediction:", pred)
+    # LOG.info("Prediction:", pred)
     return pred
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if request.form['username'] == USERNAME and request.form['password'] == PASSWORD:
+            resp = redirect(url_for('index'))
+            resp.set_cookie('logged_in', 'true')
+            return resp
+        else:
+            return 'Invalid credentials. Try again.'
+
+    return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    resp = redirect(url_for('login'))
+    resp.set_cookie('logged_in', 'false')
+    return resp
 
 
 if __name__ == "__main__":
